@@ -1,24 +1,42 @@
+const regrasDesconto = [
+  {
+    tipo: 'premium',
+    quando: (cliente, valor) => valor > 1000 && cliente.anosCadastro > 5,
+    percentual: 0.20,
+  },
+  {
+    tipo: 'premium',
+    quando: (_, valor) => valor > 1000,
+    percentual: 0.15,
+  },
+  {
+    tipo: 'premium',
+    quando: (_, valor) => valor > 500,
+    percentual: 0.10,
+  },
+  {
+    tipo: 'premium',
+    quando: () => true,
+    percentual: 0.05,
+  },
+  {
+    tipo: 'gold',
+    quando: (_, valor) => valor > 1000,
+    percentual: 0.10,
+  },
+  {
+    tipo: 'gold',
+    quando: () => true,
+    percentual: 0.02,
+  },
+];
+
 function calcularDesconto(cliente, valor) {
-  if (cliente.tipo === 'premium') {
-    if (valor > 1000) {
-      if (cliente.anosCadastro > 5) {
-        return valor * 0.20;
-      } else {
-        return valor * 0.15;
-      }
-    } else if (valor > 500) {
-      return valor * 0.10;
-    } else {
-      return valor * 0.05;
-    }
-  } else if (cliente.tipo === 'gold') {
-    if (valor > 1000) {
-      return valor * 0.10;
-    } else {
-      return valor * 0.02;
-    }
-  }
-  return 0;
+  const regra = regrasDesconto.find(
+    (regra) => regra.tipo === cliente.tipo && regra.quando(cliente, valor)
+  );
+
+  return regra ? valor * regra.percentual : 0;
 }
 
 module.exports = calcularDesconto;
